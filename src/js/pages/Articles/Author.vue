@@ -9,13 +9,11 @@
 </template>
 <script>
 import { ArticleAuthor } from '@Components/molecules';
-import Mixins from '@Helpers/mixins';
 
 export default {
   components: {
     appArticleAuthor: ArticleAuthor,
   },
-  mixins: [Mixins],
   data() {
     return {
       theads: ['ドキュメント作成者'],

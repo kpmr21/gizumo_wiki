@@ -162,15 +162,18 @@ export default {
           method: 'GET',
           url: '/article',
         }).then((res) => {
-          const userToAll = [];
-          res.data.articles.forEach((val) => {
+          const userToAll = res.data.articles.map((val) => {
+            const object = { id: '', name: '', accountName: '' };
             if (val.user !== null) {
-              const object = { id: val.user.id, name: val.user.full_name };
-              userToAll.push(object);
+              object.id = val.user.id;
+              object.name = val.user.full_name;
+              object.accountName = val.user.account_name;
             } else {
-              const object = { id: 0, name: '作者不詳' };
-              userToAll.push(object);
+              object.id = 0;
+              object.name = '作者不詳';
+              object.accountName = 'z-sakusyahushou';
             }
+            return object;
           });
           // reduceでarrayにuserを1つずつ代入
           // arrayの初期値は空の配列 userはuserToAll内の要素
@@ -184,20 +187,21 @@ export default {
           }, []);
           // 取得した単一のユーザー名を１つずつmapで処理
           const users = userToSingle.map((user) => {
-            const { id, name } = user; // オブジェクトを分割代入している 参考 => https://qiita.com/amamamaou/items/1ec21316b8bf05ba9c34#%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88
+            const {
+              id, name, accountName,
+            } = user; // オブジェクトを分割代入している 参考 => https://qiita.com/amamamaou/items/1ec21316b8bf05ba9c34#%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88
             // userToSingle内のユーザー名と一致したユーザーが作成したドキュメントのタイトルを取得する処理
             const articles = [];
             res.data.articles.forEach((val) => {
-              if (val.user === null) {
-                // val.user === nullの valをname(作者不詳)のオブジェクト内の配列に代入
-                if (name === '作者不詳') {
-                  articles.push(val);
-                }
-              } else if (name === val.user.full_name) {
+              if (val.user === null && name === '作者不詳') {
+                articles.push(val);
+              } else if (val.user !== null && val.user.full_name === name) {
                 articles.push(val);
               }
             });
-            return { id, name, articles };
+            return {
+              id, name, accountName, articles,
+            };
           });
           const payload = Object.assign({}, { users });
           commit('doneGetUsers', payload);
