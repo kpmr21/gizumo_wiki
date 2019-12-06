@@ -45,7 +45,7 @@
                 underline
                 hover-opacity
               >
-                詳細(これbranchA用のコミット)(これbranchB用のコミット)
+                詳細(これbranchA用のコミット)
               </app-router-link>
             </td>
           </div>
